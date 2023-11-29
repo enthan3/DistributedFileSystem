@@ -6,8 +6,9 @@ import (
 )
 
 type FrontendServiceConfiguration struct {
-	Address   string `json:"Address"`
-	CacheSize int64  `json:"CacheSize"`
+	Address     string `json:"Address"`
+	CacheSize   int64  `json:"CacheSize"`
+	StoragePath string `json:"StoragePath"`
 }
 
 func LoadConfiguration(path string) (FrontendServiceConfiguration, error) {
