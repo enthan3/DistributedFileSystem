@@ -1,23 +1,66 @@
 package LoadBalancer
 
 import (
+	"DistributedFileSystem/LoadBalancer/LoadBalancerConfiguration"
+	"DistributedFileSystem/LoadBalancer/LoadBalancerDefinition"
+	"DistributedFileSystem/LoadBalancer/LoadBalancerHTTP"
+	"DistributedFileSystem/LoadBalancer/LoadBalancerRPC"
 	"DistributedFileSystem/Transmission"
+	"log"
+	"net"
+	"net/http"
+	"net/rpc"
+	"time"
 )
 
-type MasterNode struct {
-	MasterAddress string
-	MasterStatus  *Transmission.MasterStatusArg
-}
-
-type LoadBalancerServer struct {
-	//Map structure Master Address to MasterNode
-	Masters map[string]MasterNode
-	//Map structure Master Address to Master Backup
-	MasterBackups map[string]string
-	//Service Address
-	Service string
-}
-
 func StartLoadBalancerServer() {
+	Config, err := LoadBalancerConfiguration.LoadConfiguration("config.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	l := LoadBalancerRPC.LoadBalancerRPCServer{LoadBalancerServer: &LoadBalancerDefinition.LoadBalancerServer{MasterStatusMap: make(map[string]*Transmission.MasterStatusArg), MasterBackupsMap: Config.MastersAddress}}
+	for MasterAddress, _ := range l.LoadBalancerServer.MasterBackupsMap {
+		l.LoadBalancerServer.MasterStatusMap[MasterAddress] = &Transmission.MasterStatusArg{}
+	}
+	err = rpc.Register(&l)
+	if err != nil {
+		log.Fatal(err)
+	}
+	L, err := net.Listen("tcp", Config.Address)
+	if err != nil {
+		log.Fatal(err)
+	}
+	go func() {
+		for {
+			err = LoadBalancerRPC.SendStatusRequestToMaster(l.LoadBalancerServer)
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = LoadBalancerRPC.SendMasterToFrontendService(l.LoadBalancerServer)
+			if err != nil {
+				log.Fatal(err)
+			}
+			time.Sleep(time.Duration(Config.HeartbeatDuration) * time.Second)
+		}
+	}()
 
+	go func() {
+		for {
+			conn, err := L.Accept()
+			if err != nil {
+				log.Fatal(err)
+			}
+			go rpc.ServeConn(conn)
+
+		}
+	}()
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		LoadBalancerHTTP.RedirectToFrontendService(w, r, l.LoadBalancerServer)
+	})
+
+	err = http.ListenAndServe(l.LoadBalancerServer.Service, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
