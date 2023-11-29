@@ -6,8 +6,10 @@ import (
 )
 
 type LoadBalancerConfiguration struct {
-	Address   string `json:"Address"`
-	CacheSize int64  `json:"CacheSize"`
+	Address           string            `json:"Address"`
+	MastersAddress    map[string]string `json:"MasterAddress"`
+	ServiceAddress    string            `json:"ServiceAddress"`
+	HeartbeatDuration int               `json:"HeartbeatDuration"`
 }
 
 func LoadConfiguration(path string) (LoadBalancerConfiguration, error) {
