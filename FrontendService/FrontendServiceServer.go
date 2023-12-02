@@ -18,12 +18,12 @@ func StartFrontendServiceServer() {
 		log.Fatal(err)
 	}
 	var Cache FrontendServiceCache.Cache
-	f := FrontendServiceRPC.FrontendServiceRPCServer{&FrontendServiceDefinition.FrontendServiceServer{Cache: Cache.NewCache(Config.CacheSize), StoragePath: Config.StoragePath, CurrentAddress: Config.Address}}
+	f := FrontendServiceRPC.FrontendServiceRPCServer{FrontendServiceServer: &FrontendServiceDefinition.FrontendServiceServer{Cache: Cache.NewCache(Config.CacheSize), StoragePath: Config.StoragePath, CurrentHTTPAddress: Config.HTTPAddress, CurrentRPCAddress: Config.RPCAddress}}
 	err = rpc.Register(&f)
 	if err != nil {
 		log.Fatal(err)
 	}
-	L, err := net.Listen("tcp", Config.Address)
+	L, err := net.Listen("tcp", f.FrontendServiceServer.CurrentRPCAddress)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,7 +54,7 @@ func StartFrontendServiceServer() {
 		FrontendServiceHTTP.ReceiveDownloadFromFrontend(w, r, f.FrontendServiceServer)
 	})
 
-	err = http.ListenAndServe(f.FrontendServiceServer.CurrentAddress, nil)
+	err = http.ListenAndServe(f.FrontendServiceServer.CurrentHTTPAddress, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

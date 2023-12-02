@@ -8,7 +8,7 @@ import (
 type LoadBalancerConfiguration struct {
 	Address           string            `json:"LoadBalancerAddress"`
 	MastersAddress    map[string]string `json:"LoadBalancerMasterAddress"`
-	ServiceAddress    string            `json:"FrontendServiceAddress"`
+	ServiceAddress    string            `json:"FrontendServiceHTTPAddress"`
 	HeartbeatDuration int               `json:"LoadBalancerHeartbeatDuration"`
 }
 

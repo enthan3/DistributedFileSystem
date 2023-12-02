@@ -6,7 +6,8 @@ import (
 )
 
 type FrontendServiceConfiguration struct {
-	Address     string `json:"FrontendServiceAddress"`
+	HTTPAddress string `json:"FrontendServiceHTTPAddress"`
+	RPCAddress  string `json:"FrontendServiceRPCAddress"`
 	CacheSize   int    `json:"FrontendServiceCacheSize"`
 	StoragePath string `json:"FrontendServiceStoragePath"`
 }

@@ -1,11 +1,12 @@
 {
 
-  "LoadBalancerAddress": "192.168.8.15:9998",
+  "LoadBalancerAddress": "192.168.8.5:9997",
   "LoadBalancerHeartbeatDuration": 5,
-  "LoadBalancerMasterAddress": {"192.168.8.15:10000": "192.168.8.15:10001","192.168.8.15:10002": "192.168.8.15:10003"},
+  "LoadBalancerMasterAddress": {"192.168.8.5:10000": "192.168.8.5:10001","192.168.8.5:10002": "192.168.8.5:10003"},
 
 
-  "FrontendServiceAddress": "192.168.8.15:9999",
+  "FrontendServiceHTTPAddress": "192.168.8.5:9998",
+  "FrontendServiceRPCAddress": "192.168.8.5:9999",
   "FrontendServiceCacheSize": 2,
   "FrontendServiceStoragePath": "./Data"
 
