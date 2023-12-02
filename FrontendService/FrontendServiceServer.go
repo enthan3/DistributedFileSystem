@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"net/rpc"
+	"sync"
 )
 
 func StartFrontendServiceServer() {
@@ -28,17 +29,22 @@ func StartFrontendServiceServer() {
 		log.Fatal(err)
 	}
 
+	var wg sync.WaitGroup
+	wg.Add(2)
 	go func() {
+		defer wg.Done()
 		for {
 			conn, err := L.Accept()
 			if err != nil {
 				log.Fatal(err)
 			}
 			go rpc.ServeConn(conn)
+			print(f.FrontendServiceServer.Masters)
 		}
 	}()
 
 	go func() {
+		defer wg.Done()
 		http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
 			FrontendServiceHTTP.ReceiveFileFromFrontend(w, r, f.FrontendServiceServer)
 		})
@@ -60,4 +66,6 @@ func StartFrontendServiceServer() {
 			log.Fatal(err)
 		}
 	}()
+	wg.Wait()
+
 }

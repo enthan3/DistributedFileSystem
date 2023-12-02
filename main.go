@@ -3,16 +3,17 @@ package main
 import (
 	"DistributedFileSystem/FrontendService"
 	"DistributedFileSystem/LoadBalancer"
+	"fmt"
 	"sync"
 )
 
 func main() {
 	var wg sync.WaitGroup
 
-	wg.Add(2) // 为两个 goroutine 增加计数器
+	wg.Add(2)
 
 	go func() {
-		defer wg.Done() // 在 goroutine 完成时调用 Done()
+		defer wg.Done()
 		FrontendService.StartFrontendServiceServer()
 
 	}()
@@ -21,5 +22,6 @@ func main() {
 		LoadBalancer.StartLoadBalancerServer()
 	}()
 
-	wg.Wait() // 阻塞，直到所有 goroutine 调用 Done()
+	wg.Wait()
+	fmt.Printf("1")
 }

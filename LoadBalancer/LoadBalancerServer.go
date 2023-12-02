@@ -19,7 +19,7 @@ func StartLoadBalancerServer() {
 		log.Fatal(err)
 	}
 	l := LoadBalancerRPC.LoadBalancerRPCServer{LoadBalancerServer: &LoadBalancerDefinition.LoadBalancerServer{MasterStatusMap: make(map[string]*Transmission.MasterStatusArg),
-		MasterBackupsMap: Config.MastersAddress, CurrentAddress: Config.Address, ServiceHTTP: Config.ServiceHTTPAddress, ServiceRPC: Config.ServiceRPCAddress}}
+		MasterBackupsMap: Config.MastersAddress, CurrentHTTP: Config.CurrentHTTPAddress, CurrentRPC: Config.CurrentRPCAddress, ServiceHTTP: Config.ServiceHTTPAddress, ServiceRPC: Config.ServiceRPCAddress}}
 	for MasterAddress, _ := range l.LoadBalancerServer.MasterBackupsMap {
 		l.LoadBalancerServer.MasterStatusMap[MasterAddress] = &Transmission.MasterStatusArg{}
 	}
@@ -27,7 +27,7 @@ func StartLoadBalancerServer() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	L, err := net.Listen("tcp", Config.Address)
+	L, err := net.Listen("tcp", Config.CurrentRPCAddress)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,9 +64,10 @@ func StartLoadBalancerServer() {
 			LoadBalancerHTTP.RedirectToFrontendService(w, r, l.LoadBalancerServer)
 		})
 
-		err = http.ListenAndServe(l.LoadBalancerServer.CurrentAddress, nil)
+		err = http.ListenAndServe(l.LoadBalancerServer.CurrentHTTP, nil)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
+
 }

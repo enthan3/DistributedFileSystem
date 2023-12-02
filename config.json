@@ -1,6 +1,7 @@
 {
 
-  "LoadBalancerAddress": "127.0.0.1:9997",
+  "LoadBalancerHTTPAddress": "127.0.0.1:9996",
+  "LoadBalancerRPCAddress": "127.0.0.1:9997",
   "LoadBalancerHeartbeatDuration": 5,
   "LoadBalancerMasterAddress": {"127.0.0.1:10000": "127.0.0.1:10001","127.0.0.1:10002": "127.0.0.1:10003"},
 
