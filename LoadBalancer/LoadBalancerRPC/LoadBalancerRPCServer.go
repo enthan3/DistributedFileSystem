@@ -19,6 +19,10 @@ func (l *LoadBalancerRPCServer) ReceivePromotionFromBackup(MasterBackupAddress *
 			l.LoadBalancerServer.MasterBackupsMap[MasterBackup] = MasterAddress
 			delete(l.LoadBalancerServer.MasterStatusMap, MasterAddress)
 			l.LoadBalancerServer.MasterStatusMap[MasterBackup] = &Transmission.MasterStatusArg{}
+			err := SendMastersToFrontendService(l.LoadBalancerServer)
+			if err != nil {
+				return err
+			}
 			*reply = true
 			return nil
 		}

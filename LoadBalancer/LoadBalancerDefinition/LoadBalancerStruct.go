@@ -8,5 +8,6 @@ type LoadBalancerServer struct {
 	//Map structure Master Address to Master Backup
 	MasterBackupsMap map[string]string
 	//Service Address
-	Service string
+	Service        string
+	CurrentAddress string
 }

@@ -2,6 +2,8 @@ package FrontendServiceHTTP
 
 import (
 	"DistributedFileSystem/FrontendService/FrontendServiceDefinition"
+	"DistributedFileSystem/FrontendService/FrontendServiceRPC"
+	"DistributedFileSystem/Transmission"
 	"DistributedFileSystem/Utils"
 	"encoding/json"
 	"io"
@@ -28,12 +30,16 @@ func ReceiveFileFromFrontend(w http.ResponseWriter, r *http.Request, f *Frontend
 		http.Error(w, "Read file FrontendService error", http.StatusInternalServerError)
 		return
 	}
-	err = os.WriteFile(handler.Filename, data, 0666)
+	FileArg := Transmission.FileArgs{
+		FileName: handler.Filename,
+		Size:     handler.Size,
+		Data:     data,
+	}
+	err = FrontendServiceRPC.SendFileToMaster(&FileArg, f)
 	if err != nil {
-		http.Error(w, "Downloading file FrontendService error", http.StatusInternalServerError)
+		http.Error(w, "File send to master FrontendService error", http.StatusInternalServerError)
 		return
 	}
-
 }
 
 // ReceiveDeleteFromFrontend Receive delete request and delete metadata from cache and master node, real data from slave nodes
@@ -43,8 +49,10 @@ func ReceiveDeleteFromFrontend(w http.ResponseWriter, r *http.Request, f *Fronte
 		return
 	}
 	fileName := r.URL.Query().Get("filename")
-	//TODO （主节点）实现删除文件功能
-
+	err := FrontendServiceRPC.SendDeleteToMaster(fileName, f)
+	if err != nil {
+		return
+	}
 	f.Cache.Del(fileName)
 	return
 }
@@ -59,17 +67,24 @@ func ReceiveDownloadFromFrontend(w http.ResponseWriter, r *http.Request, f *Fron
 	FileName := r.URL.Query().Get("filename")
 	FileMetaData, exist := f.Cache.Get(FileName)
 	if !exist {
-		//TODO （主节点）实现下载文件返回文件元数据
+		tmp, err := FrontendServiceRPC.SendSearchToMaster(FileName, f)
+		if err != nil {
+			return
+		}
+		FileMetaData = &tmp
 		f.Cache.Put(FileMetaData)
 	}
-	//TODO （从节点）实现下载文件返回文件真实数据
-
-	err := Utils.FormFile(Shards, FileMetaData.FileName, f.StoragePath)
+	Shards, err := FrontendServiceRPC.SendDownloadToSlaves(FileMetaData, f)
+	if err != nil {
+		http.Error(w, "Send download to slaves FrontendService error", http.StatusInternalServerError)
+		return
+	}
+	err = Utils.FormFile(Shards, FileMetaData.FileName, f.StoragePath)
 	if err != nil {
 		http.Error(w, "Form file FrontendService error", http.StatusInternalServerError)
 		return
 	}
-	defer os.Remove(f.StoragePath + FileMetaData.FileName)
+
 	w.Header().Set("Content-Disposition", "attachment;filename="+FileMetaData.FileName)
 	w.Header().Set("Content-Type", "application/octet-stream")
 	FileData, err := os.ReadFile(f.StoragePath + FileMetaData.FileName)
@@ -80,6 +95,11 @@ func ReceiveDownloadFromFrontend(w http.ResponseWriter, r *http.Request, f *Fron
 	_, err = w.Write(FileData)
 	if err != nil {
 		http.Error(w, "Write write FrontendService error", http.StatusInternalServerError)
+		return
+	}
+	err = os.Remove(f.StoragePath + FileMetaData.FileName)
+	if err != nil {
+		http.Error(w, "Remove temporary file FrontendService error", http.StatusInternalServerError)
 		return
 	}
 }
@@ -94,9 +114,11 @@ func ReceiveSearchFromFrontend(w http.ResponseWriter, r *http.Request, f *Fronte
 
 	FileMetaData, exist := f.Cache.Get(FileName)
 	if !exist {
-		//TODO 实现SendSearchToMaster方法，文件存在返回文件元数据不存在返回false
-
-		f.Cache.Put(FileMetaData)
+		FileMetaData, err := FrontendServiceRPC.SendSearchToMaster(FileName, f)
+		if err != nil {
+			return
+		}
+		f.Cache.Put(&FileMetaData)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(FileMetaData)

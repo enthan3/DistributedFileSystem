@@ -6,7 +6,10 @@ import (
 
 // FrontendServiceServer Structure to store Master Address, Cache
 type FrontendServiceServer struct {
-	Master      string
-	Cache       FrontendServiceCache.Cache
-	StoragePath string
+	//Map structure Master Address to Master Backup
+	Masters        []string
+	LowestMaster   string
+	Cache          *FrontendServiceCache.Cache
+	StoragePath    string
+	CurrentAddress string
 }

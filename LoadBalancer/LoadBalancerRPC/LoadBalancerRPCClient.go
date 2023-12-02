@@ -31,18 +31,42 @@ func SendStatusRequestToMaster(l *LoadBalancerDefinition.LoadBalancerServer) err
 	return nil
 }
 
-// SendMasterToFrontendService Send Frontend Service with Master Node address with the lowest load to processing request
-func SendMasterToFrontendService(l *LoadBalancerDefinition.LoadBalancerServer) error {
+// SendLowestUsageMasterToFrontendService Send Frontend Service with Master Node address with the lowest load to processing request
+func SendLowestUsageMasterToFrontendService(l *LoadBalancerDefinition.LoadBalancerServer) error {
 	var reply bool
 	MasterAddress := LoadBalancerStrategy.GetNextMasterURL(l)
 	client, err := rpc.Dial("tcp", MasterAddress)
 	if err != nil {
 		return err
 	}
-	//TODO 前端服务层实现接收主节点,实现如果reply不为正确的选项
-	err = client.Call("", &MasterAddress, &reply)
+	err = client.Call("FrontendServiceRPCServer.ReceiveLowestUsageMasterFromLoadBalancer", &MasterAddress, &reply)
 	if err != nil {
 		return err
+	}
+	if reply != true {
+		return errors.New("Receive lowest usage master address FrontendService error")
+	}
+	return nil
+}
+
+// SendMastersToFrontendService Send Frontend Service with all the master node address
+func SendMastersToFrontendService(l *LoadBalancerDefinition.LoadBalancerServer) error {
+	var reply bool
+	var Masters []string
+
+	for MasterAddress, _ := range l.MasterBackupsMap {
+		Masters = append(Masters, MasterAddress)
+	}
+	client, err := rpc.Dial("tcp", l.Service)
+	if err != nil {
+		return err
+	}
+	err = client.Call("FrontendServiceRPCServer.ReceiveMastersFromLoadBalancer", &Masters, &reply)
+	if err != nil {
+		return err
+	}
+	if reply != true {
+		return errors.New("Receive masters address FrontendService error")
 	}
 	return nil
 }

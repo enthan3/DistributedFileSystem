@@ -1,6 +1,12 @@
 {
-  "Address": "192.168.8.15:9998",
-  "MasterAddress": {"192.168.8.15:10000": "192.168.8.15:10001","192.168.8.15:10002": "192.168.8.15:10003"},
-  "ServiceAddress":"192.168.8.15:9999",
-  "HeartbeatDuration": 5
+
+  "LoadBalancerAddress": "192.168.8.15:9998",
+  "LoadBalancerHeartbeatDuration": 5,
+  "LoadBalancerMasterAddress": {"192.168.8.15:10000": "192.168.8.15:10001","192.168.8.15:10002": "192.168.8.15:10003"},
+
+
+  "FrontendServiceAddress": "192.168.8.15:9999",
+  "FrontendServiceCacheSize": 2,
+  "FrontendServiceStoragePath": "./Data"
+
 }
