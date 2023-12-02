@@ -38,25 +38,26 @@ func StartFrontendServiceServer() {
 		}
 	}()
 
-	http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
-		FrontendServiceHTTP.ReceiveFileFromFrontend(w, r, f.FrontendServiceServer)
-	})
+	go func() {
+		http.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+			FrontendServiceHTTP.ReceiveFileFromFrontend(w, r, f.FrontendServiceServer)
+		})
 
-	http.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
-		FrontendServiceHTTP.ReceiveDeleteFromFrontend(w, r, f.FrontendServiceServer)
-	})
+		http.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
+			FrontendServiceHTTP.ReceiveDeleteFromFrontend(w, r, f.FrontendServiceServer)
+		})
 
-	http.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
-		FrontendServiceHTTP.ReceiveSearchFromFrontend(w, r, f.FrontendServiceServer)
-	})
+		http.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
+			FrontendServiceHTTP.ReceiveSearchFromFrontend(w, r, f.FrontendServiceServer)
+		})
 
-	http.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
-		FrontendServiceHTTP.ReceiveDownloadFromFrontend(w, r, f.FrontendServiceServer)
-	})
+		http.HandleFunc("/download", func(w http.ResponseWriter, r *http.Request) {
+			FrontendServiceHTTP.ReceiveDownloadFromFrontend(w, r, f.FrontendServiceServer)
+		})
 
-	err = http.ListenAndServe(f.FrontendServiceServer.CurrentHTTPAddress, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+		err = http.ListenAndServe(f.FrontendServiceServer.CurrentHTTPAddress, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 }

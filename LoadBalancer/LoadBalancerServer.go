@@ -59,13 +59,14 @@ func StartLoadBalancerServer() {
 
 		}
 	}()
+	go func() {
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			LoadBalancerHTTP.RedirectToFrontendService(w, r, l.LoadBalancerServer)
+		})
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		LoadBalancerHTTP.RedirectToFrontendService(w, r, l.LoadBalancerServer)
-	})
-
-	err = http.ListenAndServe(l.LoadBalancerServer.CurrentAddress, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
+		err = http.ListenAndServe(l.LoadBalancerServer.CurrentAddress, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 }
