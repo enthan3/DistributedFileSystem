@@ -19,7 +19,7 @@ func StartLoadBalancerServer() {
 		log.Fatal(err)
 	}
 	l := LoadBalancerRPC.LoadBalancerRPCServer{LoadBalancerServer: &LoadBalancerDefinition.LoadBalancerServer{MasterStatusMap: make(map[string]*Transmission.MasterStatusArg),
-		MasterBackupsMap: Config.MastersAddress, CurrentAddress: Config.Address, Service: Config.ServiceAddress}}
+		MasterBackupsMap: Config.MastersAddress, CurrentAddress: Config.Address, ServiceHTTP: Config.ServiceHTTPAddress, ServiceRPC: Config.ServiceRPCAddress}}
 	for MasterAddress, _ := range l.LoadBalancerServer.MasterBackupsMap {
 		l.LoadBalancerServer.MasterStatusMap[MasterAddress] = &Transmission.MasterStatusArg{}
 	}

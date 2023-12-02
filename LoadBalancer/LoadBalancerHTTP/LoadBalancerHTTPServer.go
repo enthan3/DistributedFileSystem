@@ -9,7 +9,7 @@ import (
 
 // RedirectToFrontendService Setting this server as a Reverse Proxy then redirect the request to Frontend Service.
 func RedirectToFrontendService(w http.ResponseWriter, r *http.Request, l *LoadBalancerDefinition.LoadBalancerServer) {
-	FrontendServiceURL, err := url.Parse("http://" + l.Service)
+	FrontendServiceURL, err := url.Parse("http://" + l.ServiceHTTP)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -3,7 +3,6 @@ package main
 import (
 	"DistributedFileSystem/FrontendService"
 	"DistributedFileSystem/LoadBalancer"
-	"fmt"
 	"sync"
 )
 
@@ -15,7 +14,6 @@ func main() {
 	go func() {
 		defer wg.Done() // 在 goroutine 完成时调用 Done()
 		FrontendService.StartFrontendServiceServer()
-		fmt.Print(1)
 
 	}()
 	go func() {

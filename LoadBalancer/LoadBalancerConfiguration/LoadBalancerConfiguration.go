@@ -6,10 +6,11 @@ import (
 )
 
 type LoadBalancerConfiguration struct {
-	Address           string            `json:"LoadBalancerAddress"`
-	MastersAddress    map[string]string `json:"LoadBalancerMasterAddress"`
-	ServiceAddress    string            `json:"FrontendServiceHTTPAddress"`
-	HeartbeatDuration int               `json:"LoadBalancerHeartbeatDuration"`
+	Address            string            `json:"LoadBalancerAddress"`
+	MastersAddress     map[string]string `json:"LoadBalancerMasterAddress"`
+	ServiceHTTPAddress string            `json:"FrontendServiceHTTPAddress"`
+	ServiceRPCAddress  string            `json:"FrontendServiceRPCAddress"`
+	HeartbeatDuration  int               `json:"LoadBalancerHeartbeatDuration"`
 }
 
 func LoadConfiguration(path string) (LoadBalancerConfiguration, error) {

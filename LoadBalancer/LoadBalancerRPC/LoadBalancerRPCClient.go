@@ -57,7 +57,7 @@ func SendMastersToFrontendService(l *LoadBalancerDefinition.LoadBalancerServer) 
 	for MasterAddress, _ := range l.MasterBackupsMap {
 		Masters = append(Masters, MasterAddress)
 	}
-	client, err := rpc.Dial("tcp", l.Service)
+	client, err := rpc.Dial("tcp", l.ServiceRPC)
 	if err != nil {
 		return err
 	}
