@@ -18,8 +18,7 @@ func SendFileToMaster(FileArg *Transmission.FileArgs, f *FrontendServiceDefiniti
 	if err != nil {
 		return err
 	}
-	//TODO
-	err = client.Call("", FileArg, &reply)
+	err = client.Call("MasterRPCServer.ReceiveFileFromFrontendService", FileArg, &reply)
 	if err != nil {
 		return err
 	}
@@ -38,7 +37,7 @@ func SendDeleteToMaster(FileName string, f *FrontendServiceDefinition.FrontendSe
 			return err
 		}
 		//TODO
-		err = client.Call("", FileName, &reply)
+		err = client.Call("MasterRPCServer.ReceiveDeleteFromFrontendService", FileName, &reply)
 		if err != nil {
 			return err
 		}
@@ -57,7 +56,7 @@ func SendSearchToMaster(FileName string, f *FrontendServiceDefinition.FrontendSe
 			return Metadata.FileMetaData{}, err
 		}
 		//TODO
-		err = client.Call("", FileName, &reply)
+		err = client.Call("MasterRPCServer.ReceiveSearchFromFrontendService", FileName, &reply)
 		if err != nil {
 			return Metadata.FileMetaData{}, err
 		}

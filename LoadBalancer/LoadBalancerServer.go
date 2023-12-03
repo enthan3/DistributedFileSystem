@@ -6,6 +6,7 @@ import (
 	"DistributedFileSystem/LoadBalancer/LoadBalancerHTTP"
 	"DistributedFileSystem/LoadBalancer/LoadBalancerRPC"
 	"DistributedFileSystem/Transmission"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -35,9 +36,11 @@ func StartLoadBalancerServer() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	go func() {
 		for {
 			err = LoadBalancerRPC.SendStatusRequestToMaster(l.LoadBalancerServer)
+			fmt.Println(l.LoadBalancerServer.MasterStatusMap["127.0.0.1:10010"].Stat.Load1)
 			if err != nil {
 				log.Fatal(err)
 			}

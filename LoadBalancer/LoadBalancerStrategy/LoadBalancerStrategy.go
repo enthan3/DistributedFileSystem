@@ -10,7 +10,7 @@ func GetNextMasterURL(l *LoadBalancerDefinition.LoadBalancerServer) string {
 	LowestLoad := math.MaxFloat64
 	LowestAddress := ""
 	for MasterAddress, MasterStatus := range l.MasterStatusMap {
-		if MasterStatus.Stat.Load1 < LowestLoad && MasterStatus.HealthStatus == true {
+		if MasterStatus.HealthStatus == true && MasterStatus.Stat.Load1 < LowestLoad {
 			LowestLoad = MasterStatus.Stat.Load1
 			LowestAddress = MasterAddress
 		}

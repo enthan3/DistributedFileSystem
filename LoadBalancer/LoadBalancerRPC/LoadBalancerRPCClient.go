@@ -18,7 +18,7 @@ func SendStatusRequestToMaster(l *LoadBalancerDefinition.LoadBalancerServer) err
 			return err
 		}
 		//TODO 主节点实现状态更新检查,可能实现reply不为正确的选项
-		err = client.Call("", &struct{}{}, &reply)
+		err = client.Call("MasterRPCServer.ReceiveStatusRequestFromLoadBalancer", &struct{}{}, &reply)
 		if err != nil {
 			if errors.Is(err, rpc.ErrShutdown) {
 				l.MasterStatusMap[MasterAddress] = &Transmission.MasterStatusArg{MasterAddress: MasterAddress, LastHeartbeatTime: time.Now(), HealthStatus: false}
@@ -46,6 +46,7 @@ func SendLowestUsageMasterToFrontendService(l *LoadBalancerDefinition.LoadBalanc
 	if reply != true {
 		return errors.New("Receive lowest usage master address FrontendService error")
 	}
+
 	return nil
 }
 
