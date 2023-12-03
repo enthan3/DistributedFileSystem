@@ -39,7 +39,6 @@ func StartFrontendServiceServer() {
 				log.Fatal(err)
 			}
 			go rpc.ServeConn(conn)
-			print(f.FrontendServiceServer.Masters)
 		}
 	}()
 
