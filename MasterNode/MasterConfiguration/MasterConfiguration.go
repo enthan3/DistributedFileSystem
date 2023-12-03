@@ -11,6 +11,9 @@ type MasterConfiguration struct {
 	MasterBackupRPCAddress string   `json:"MasterBackupRPCAddress"`
 	LogPath                string   `json:"MasterLogPath"`
 	HeartbeatDuration      int      `json:"MasterHeartbeatDuration"`
+	ChunkSize              int64    `json:"MasterChunkSize"`
+	StoragePath            string   `json:"MasterStoragePath"`
+	ReplicationFactor      int      `json:"MasterReplicationFactor"`
 }
 
 type MasterBackupConfiguration struct {

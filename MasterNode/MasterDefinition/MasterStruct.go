@@ -7,11 +7,7 @@ type MasterServer struct {
 	CurrentBackupRPCAddress string
 	SlaveRPCAddress         []string
 	FileMetadata            []Metadata.FileMetaData
-}
-
-type MasterBackupServer struct {
-	CurrentRPCAddress string
-	MasterRPCAddress  string
-	SlaveRPCAddress   []string
-	FileMetadata      []Metadata.FileMetaData
+	ChunkSize               int64
+	StoragePath             string
+	ReplicationFactor       int
 }

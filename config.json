@@ -9,15 +9,18 @@
   "FrontendServiceHTTPAddress": "127.0.0.1:9998",
   "FrontendServiceRPCAddress": "127.0.0.1:9999",
   "FrontendServiceCacheSize": 2,
-  "FrontendServiceStoragePath": "./Data",
+  "FrontendServiceStoragePath": "./FrontendServiceData/",
 
   "MasterRPCAddress": "127.0.0.1:10010",
   "MasterBackupRPCAddress": "127.0.0.1:10011",
   "SlavesRPCAddress": ["127.0.0.1:10004","127.0.0.1:10005"],
-  "MasterLogPath" : "./MasterLog",
+  "MasterLogPath" : "./MasterLog/",
   "MasterHeartbeatDuration": 5,
+  "MasterChunkSize": 67108864,
+  "MasterStoragePath": "./MasterData/",
+  "MasterReplicationFactor": 3,
 
-  "MasterBackupLogPath": "./MasterBackupLog",
+  "MasterBackupLogPath": "./MasterBackupLog/",
   "MasterBackupHeartbeatDuration": 5
 
 }
