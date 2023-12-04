@@ -16,7 +16,7 @@
   "SlavesRPCAddress": ["127.0.0.1:10004"],
   "MasterLogPath" : "./MasterLog/",
   "MasterHeartbeatDuration": 5,
-  "MasterChunkSize": 1024,
+  "MasterChunkSize": 67108864,
   "MasterStoragePath": "./MasterData/",
   "MasterReplicationFactor": 3,
 

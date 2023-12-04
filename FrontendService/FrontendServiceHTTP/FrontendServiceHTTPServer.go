@@ -116,11 +116,12 @@ func ReceiveSearchFromFrontend(w http.ResponseWriter, r *http.Request, f *Fronte
 
 	FileMetaData, exist := f.Cache.Get(FileName)
 	if !exist {
-		FileMetaData, err := FrontendServiceRPC.SendSearchToMaster(FileName, f)
+		temp, err := FrontendServiceRPC.SendSearchToMaster(FileName, f)
 		if err != nil {
 			return
 		}
-		f.Cache.Put(&FileMetaData)
+		f.Cache.Put(&temp)
+		FileMetaData = &temp
 	}
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(FileMetaData)
