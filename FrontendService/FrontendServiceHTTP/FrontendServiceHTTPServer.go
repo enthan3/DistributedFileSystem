@@ -19,7 +19,7 @@ func ReceiveFileFromFrontend(w http.ResponseWriter, r *http.Request, f *Frontend
 		http.Error(w, "Method not allowed!", http.StatusMethodNotAllowed)
 		return
 	}
-	file, handler, err := r.FormFile("uploadFile")
+	file, handler, err := r.FormFile("File")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -48,7 +48,7 @@ func ReceiveDeleteFromFrontend(w http.ResponseWriter, r *http.Request, f *Fronte
 		http.Error(w, "Method not allowed!", http.StatusMethodNotAllowed)
 		return
 	}
-	fileName := r.URL.Query().Get("filename")
+	fileName := r.URL.Query().Get("File")
 	err := FrontendServiceRPC.SendDeleteToMaster(fileName, f)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -65,7 +65,7 @@ func ReceiveDownloadFromFrontend(w http.ResponseWriter, r *http.Request, f *Fron
 		http.Error(w, "Method not allowed!", http.StatusMethodNotAllowed)
 		return
 	}
-	FileName := r.URL.Query().Get("filename")
+	FileName := r.URL.Query().Get("File")
 	FileMetaData, exist := f.Cache.Get(FileName)
 	if !exist {
 		tmp, err := FrontendServiceRPC.SendSearchToMaster(FileName, f)
@@ -112,7 +112,7 @@ func ReceiveSearchFromFrontend(w http.ResponseWriter, r *http.Request, f *Fronte
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	FileName := r.URL.Query().Get("filename")
+	FileName := r.URL.Query().Get("File")
 
 	FileMetaData, exist := f.Cache.Get(FileName)
 	if !exist {

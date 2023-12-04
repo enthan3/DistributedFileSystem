@@ -13,14 +13,16 @@
 
   "MasterRPCAddress": "127.0.0.1:10010",
   "MasterBackupRPCAddress": "127.0.0.1:10011",
-  "SlavesRPCAddress": ["127.0.0.1:10004","127.0.0.1:10005"],
+  "SlavesRPCAddress": ["127.0.0.1:10004"],
   "MasterLogPath" : "./MasterLog/",
   "MasterHeartbeatDuration": 5,
-  "MasterChunkSize": 67108864,
+  "MasterChunkSize": 1024,
   "MasterStoragePath": "./MasterData/",
   "MasterReplicationFactor": 3,
 
   "MasterBackupLogPath": "./MasterBackupLog/",
-  "MasterBackupHeartbeatDuration": 5
+  "MasterBackupHeartbeatDuration": 5,
 
+  "SlaveRPCAddress": "127.0.0.1:10004",
+  "SlaveStoragePath": "./SlaveData/"
 }

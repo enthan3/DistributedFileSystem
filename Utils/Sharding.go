@@ -11,7 +11,6 @@ type Shard struct {
 	Data  []byte
 }
 
-// FormFile 将所有的分片拼装在一起,或者将单个分块的文件变成一个file
 func FormFile(shards []Shard, fileName string, StoragePath string) error {
 	file, err := os.Create(StoragePath + fileName)
 	if err != nil {

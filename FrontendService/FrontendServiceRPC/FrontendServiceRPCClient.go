@@ -68,19 +68,16 @@ func SendSearchToMaster(FileName string, f *FrontendServiceDefinition.FrontendSe
 }
 
 func SendDownloadToSlaves(FileMetadata *Metadata.FileMetaData, f *FrontendServiceDefinition.FrontendServiceServer) ([]Utils.Shard, error) {
-	var reply Transmission.ChunkArg
+
 	var Shards []Utils.Shard
 	for index, ChunkMetadata := range FileMetadata.ChunkMain {
+		var reply Transmission.ChunkArg
 		client, err := rpc.Dial("tcp", ChunkMetadata.ChunkNode)
 		if err != nil {
 			return make([]Utils.Shard, 0), err
 		}
-
-		err = client.Call("", ChunkMetadata.ChunkName, &reply)
+		err = client.Call("SlaveRPCServer.ReceiveDownloadFromFrontendService", ChunkMetadata.ChunkName, &reply)
 		if err != nil {
-			return make([]Utils.Shard, 0), err
-		}
-		if reply.ChunkName == "" {
 			return make([]Utils.Shard, 0), err
 		}
 		Shards = append(Shards, Utils.Shard{Index: index, Data: reply.Data})

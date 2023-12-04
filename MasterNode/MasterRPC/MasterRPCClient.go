@@ -19,8 +19,7 @@ func SendChunksToSlave(chunkArgs *[]Transmission.ChunkArg, FileMetaData *Metadat
 		if err != nil {
 			return err
 		}
-		//TODO
-		err = client.Call("", &Chunk, &reply)
+		err = client.Call("SlaveRPCServer.ReceiveChunkFromMaster", &Chunk, &reply)
 		if err != nil {
 			return err
 		}
@@ -46,8 +45,7 @@ func SendDeleteToSlave(Filename string, m *MasterDefinition.MasterServer) error 
 			if err != nil {
 				return err
 			}
-			//TODO
-			err = client.Call("", ChunkMetadata.ChunkName, &reply)
+			err = client.Call("SlaveRPCServer.ReceiveDeleteFromMaster", ChunkMetadata.ChunkName, &reply)
 			if err != nil {
 				return err
 			}
@@ -61,8 +59,7 @@ func SendDeleteToSlave(Filename string, m *MasterDefinition.MasterServer) error 
 			if err != nil {
 				return err
 			}
-			//TODO
-			err = client.Call("", ChunkReplicateMetadata.ChunkName, &reply)
+			err = client.Call("SlaveRPCServer.ReceiveDeleteFromMaster", ChunkReplicateMetadata.ChunkName, &reply)
 			if err != nil {
 				return err
 			}

@@ -25,13 +25,17 @@ func ChunkFile(FileUUID string, FileArg *Transmission.FileArgs, m *MasterDefinit
 		temp := Transmission.ChunkArg{ChunkName: ChunkID, Size: Size, Data: Data}
 		FileChunks = append(FileChunks, temp)
 	}
+	err = os.Remove(m.StoragePath + FileArg.FileName)
+	if err != nil {
+		return make([]Transmission.ChunkArg, 0), err
+	}
 	return FileChunks, nil
 }
 
 func ReplicationChunks(ChunkArgs []Transmission.ChunkArg, m *MasterDefinition.MasterServer) ([]Transmission.ChunkArg, error) {
 	var FileChunks []Transmission.ChunkArg
 	for i := 0; i < m.ReplicationFactor+1; i++ {
-		for _, ChunkArg := range FileChunks {
+		for _, ChunkArg := range ChunkArgs {
 			if i == 0 {
 				ChunkArg.ChunkName += "_" + "main"
 				FileChunks = append(FileChunks, ChunkArg)
