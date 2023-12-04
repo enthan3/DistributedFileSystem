@@ -11,7 +11,7 @@ type FileArgs struct {
 	Data     []byte
 }
 
-type ChunkArgs struct {
+type ChunkArg struct {
 	ChunkName string
 	Size      int64
 	Data      []byte

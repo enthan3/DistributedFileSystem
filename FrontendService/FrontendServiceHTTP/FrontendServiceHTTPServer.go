@@ -21,13 +21,13 @@ func ReceiveFileFromFrontend(w http.ResponseWriter, r *http.Request, f *Frontend
 	}
 	file, handler, err := r.FormFile("uploadFile")
 	if err != nil {
-		http.Error(w, "Retrieving file FrontendService error", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer file.Close()
 	data, err := io.ReadAll(file)
 	if err != nil {
-		http.Error(w, "Read file FrontendService error", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	FileArg := Transmission.FileArgs{
@@ -37,7 +37,7 @@ func ReceiveFileFromFrontend(w http.ResponseWriter, r *http.Request, f *Frontend
 	}
 	err = FrontendServiceRPC.SendFileToMaster(&FileArg, f)
 	if err != nil {
-		http.Error(w, "File send to master FrontendService error", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -51,6 +51,7 @@ func ReceiveDeleteFromFrontend(w http.ResponseWriter, r *http.Request, f *Fronte
 	fileName := r.URL.Query().Get("filename")
 	err := FrontendServiceRPC.SendDeleteToMaster(fileName, f)
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	f.Cache.Del(fileName)
@@ -69,6 +70,7 @@ func ReceiveDownloadFromFrontend(w http.ResponseWriter, r *http.Request, f *Fron
 	if !exist {
 		tmp, err := FrontendServiceRPC.SendSearchToMaster(FileName, f)
 		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		FileMetaData = &tmp
@@ -76,12 +78,12 @@ func ReceiveDownloadFromFrontend(w http.ResponseWriter, r *http.Request, f *Fron
 	}
 	Shards, err := FrontendServiceRPC.SendDownloadToSlaves(FileMetaData, f)
 	if err != nil {
-		http.Error(w, "Send download to slaves FrontendService error", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	err = Utils.FormFile(Shards, FileMetaData.FileName, f.StoragePath)
 	if err != nil {
-		http.Error(w, "Form file FrontendService error", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -89,17 +91,17 @@ func ReceiveDownloadFromFrontend(w http.ResponseWriter, r *http.Request, f *Fron
 	w.Header().Set("Content-Type", "application/octet-stream")
 	FileData, err := os.ReadFile(f.StoragePath + FileMetaData.FileName)
 	if err != nil {
-		http.Error(w, "Reading file FrontendService error", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	_, err = w.Write(FileData)
 	if err != nil {
-		http.Error(w, "Write write FrontendService error", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	err = os.Remove(f.StoragePath + FileMetaData.FileName)
 	if err != nil {
-		http.Error(w, "Remove temporary file FrontendService error", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

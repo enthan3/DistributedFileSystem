@@ -36,7 +36,7 @@ func SendDeleteToMaster(FileName string, f *FrontendServiceDefinition.FrontendSe
 		if err != nil {
 			return err
 		}
-		//TODO
+
 		err = client.Call("MasterRPCServer.ReceiveDeleteFromFrontendService", FileName, &reply)
 		if err != nil {
 			return err
@@ -55,7 +55,7 @@ func SendSearchToMaster(FileName string, f *FrontendServiceDefinition.FrontendSe
 		if err != nil {
 			return Metadata.FileMetaData{}, err
 		}
-		//TODO
+
 		err = client.Call("MasterRPCServer.ReceiveSearchFromFrontendService", FileName, &reply)
 		if err != nil {
 			return Metadata.FileMetaData{}, err
@@ -68,14 +68,14 @@ func SendSearchToMaster(FileName string, f *FrontendServiceDefinition.FrontendSe
 }
 
 func SendDownloadToSlaves(FileMetadata *Metadata.FileMetaData, f *FrontendServiceDefinition.FrontendServiceServer) ([]Utils.Shard, error) {
-	var reply Transmission.ChunkArgs
+	var reply Transmission.ChunkArg
 	var Shards []Utils.Shard
 	for index, ChunkMetadata := range FileMetadata.ChunkMain {
 		client, err := rpc.Dial("tcp", ChunkMetadata.ChunkNode)
 		if err != nil {
 			return make([]Utils.Shard, 0), err
 		}
-		//TODO
+
 		err = client.Call("", ChunkMetadata.ChunkName, &reply)
 		if err != nil {
 			return make([]Utils.Shard, 0), err
