@@ -19,6 +19,7 @@
   "MasterChunkSize": 67108864,
   "MasterStoragePath": "./MasterData/",
   "MasterReplicationFactor": 3,
+  "MasterIsBackup": false,
 
   "MasterBackupLogPath": "./MasterBackupLog/",
   "MasterBackupHeartbeatDuration": 5,

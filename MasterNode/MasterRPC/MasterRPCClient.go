@@ -38,7 +38,7 @@ func SendChunksToSlave(chunkArgs *[]Transmission.ChunkArg, FileMetaData *Metadat
 
 func SendDeleteToSlave(Filename string, m *MasterDefinition.MasterServer) error {
 	var reply bool
-	FileMetadata, exist := m.FileMetadata[Filename]
+	FileMetadata, exist := m.FileMetadataName[Filename]
 	if exist {
 		for _, ChunkMetadata := range FileMetadata.ChunkMain {
 			client, err := rpc.Dial("tcp", ChunkMetadata.ChunkNode)

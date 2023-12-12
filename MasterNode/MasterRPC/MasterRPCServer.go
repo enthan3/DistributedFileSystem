@@ -40,7 +40,8 @@ func (m *MasterRPCServer) ReceiveFileFromFrontendService(FileArg *Transmission.F
 	FileMetadata.FileName = FileArg.FileName
 	FileMetadata.Size = FileArg.Size
 	FileMetadata.CreateTime = time.Now()
-	m.MasterServer.FileMetadata[FileArg.FileName] = FileMetadata
+	m.MasterServer.FileMetadataName[FileArg.FileName] = &FileMetadata
+	m.MasterServer.FileMetadataID[FileArg.FileName] = &FileMetadata
 	*reply = true
 	return nil
 }
@@ -54,13 +55,14 @@ func (m *MasterRPCServer) ReceiveDeleteFromFrontendService(FileName string, repl
 	} else {
 		*reply = "Delete send to Slave Master error"
 	}
-	delete(m.MasterServer.FileMetadata, FileName)
+	delete(m.MasterServer.FileMetadataName, FileName)
+	delete(m.MasterServer.FileMetadataID, FileName)
 	*reply = "Success!"
 	return nil
 }
 
 func (m *MasterRPCServer) ReceiveSearchFromFrontendService(Filename string, reply *Metadata.FileMetaData) error {
-	FileMetadata, _ := m.MasterServer.FileMetadata[Filename]
-	*reply = FileMetadata
+	FileMetadata, _ := m.MasterServer.FileMetadataName[Filename]
+	*reply = *FileMetadata
 	return nil
 }
