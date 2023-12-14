@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+//Master Send Files Functions
+
 func SendChunksToSlave(chunkArgs *[]Transmission.ChunkArg, FileMetaData *Metadata.FileMetaData, m *MasterDefinition.MasterServer) error {
 	var reply bool
 	for _, Chunk := range *chunkArgs {
@@ -72,4 +74,25 @@ func SendDeleteToSlave(Filename string, m *MasterDefinition.MasterServer) error 
 	} else {
 		return errors.New("File does not exist!")
 	}
+}
+
+// Master Sync Log Functions
+func SendSyncLogToMaster(LatestID int64, m *MasterDefinition.MasterServer) error {
+	var reply bool
+	client, err := rpc.Dial("tcp", m.CurrentRPCAddress)
+	if err != nil {
+		return err
+	}
+	//TODO
+	err = client.Call("", LatestID, &reply)
+	if !reply {
+		return errors.New("Send sync log MasterBackup error")
+	}
+	return nil
+}
+
+//Master To MasterBackups Updates FileMetadata function
+
+func SendFileMetadataToMasterBackup() {
+
 }
