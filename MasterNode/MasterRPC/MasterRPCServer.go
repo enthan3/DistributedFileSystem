@@ -110,6 +110,7 @@ func (m *MasterRPCServer) ReceiveSyncLogFromMasterBackup(LatestID int64, reply *
 			SendSearchToMasterBackup(FileUUID, m.MasterServer)
 		}
 	}
+	*reply = true
 	return nil
 }
 
@@ -142,6 +143,10 @@ func (m *MasterRPCServer) ReceiveDeleteFromMaster(FileMetadata *Metadata.FileMet
 	_, exist = m.MasterServer.FileMetadataID[FileMetadata.FileID]
 	if !exist {
 		return errors.New("File does not exist in ID mapping")
+	}
+	err := m.MasterServer.Logger.Log(FileMetadata.FileID, "Search")
+	if err != nil {
+		return err
 	}
 	delete(m.MasterServer.FileMetadataName, FileMetadata.FileName)
 	delete(m.MasterServer.FileMetadataID, FileMetadata.FileID)
