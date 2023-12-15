@@ -84,7 +84,7 @@ func SendSyncLogToMaster(LatestID int64, m *MasterDefinition.MasterServer) error
 		return err
 	}
 	//TODO
-	err = client.Call("", LatestID, &reply)
+	err = client.Call("MasterRPCServer.ReceiveSyncLogFromMasterBackup", LatestID, &reply)
 	if !reply {
 		return errors.New("Send sync log MasterBackup error")
 	}
@@ -93,6 +93,44 @@ func SendSyncLogToMaster(LatestID int64, m *MasterDefinition.MasterServer) error
 
 //Master To MasterBackups Updates FileMetadata function
 
-func SendFileMetadataToMasterBackup() {
+func SendFileMetadataToMasterBackup(FileMetadata *Metadata.FileMetaData, m *MasterDefinition.MasterServer) {
+	var reply bool
+	client, err := rpc.Dial("tcp", m.CurrentBackupRPCAddress)
+	if err != nil {
+		return
+	}
+	//TODO
+	err = client.Call("", FileMetadata, &reply)
+	if err != nil {
+		return
+	}
+	return
+}
 
+func SendSearchToMasterBackup(FileUUID string, m *MasterDefinition.MasterServer) {
+	var reply bool
+	client, err := rpc.Dial("tcp", m.CurrentBackupRPCAddress)
+	if err != nil {
+		return
+	}
+	//TODO
+	err = client.Call("", FileUUID, &reply)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func SendDeleteToMasterBackup(FileMetadata *Metadata.FileMetaData, m *MasterDefinition.MasterServer) {
+	var reply bool
+	client, err := rpc.Dial("tcp", m.CurrentBackupRPCAddress)
+	if err != nil {
+		return
+	}
+	//TODO
+	err = client.Call("", FileMetadata, &reply)
+	if err != nil {
+		return
+	}
+	return
 }

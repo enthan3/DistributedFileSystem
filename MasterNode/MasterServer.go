@@ -4,6 +4,7 @@ import (
 	"DistributedFileSystem/MasterNode/MasterConfiguration"
 	"DistributedFileSystem/MasterNode/MasterDefinition"
 	"DistributedFileSystem/MasterNode/MasterRPC"
+	"DistributedFileSystem/MasterNode/MaterLogService"
 	"DistributedFileSystem/Metadata"
 	"log"
 	"net"
@@ -15,10 +16,14 @@ func StartMasterServer() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	Logger, err := MaterLogService.InitLogger(Config.LogPath + "MasterLog")
+	if err != nil {
+		log.Fatal(err)
+	}
 	m := MasterRPC.MasterRPCServer{MasterServer: &MasterDefinition.MasterServer{CurrentRPCAddress: Config.CurrentRPCAddress,
 		CurrentBackupRPCAddress: Config.MasterBackupRPCAddress, SlaveRPCAddress: Config.SlavesRPCAddress,
-		FileMetadata: make(map[string]Metadata.FileMetaData), ChunkSize: Config.ChunkSize, StoragePath: Config.StoragePath,
-		ReplicationFactor: Config.ReplicationFactor, LoadBalanceIndex: 0}}
+		FileMetadataName: make(map[string]*Metadata.FileMetaData), FileMetadataID: make(map[string]*Metadata.FileMetaData),
+		ChunkSize: 67108864, StoragePath: Config.StoragePath, ReplicationFactor: 3, LoadBalanceIndex: 0, Logger: Logger, IsBackup: false}}
 	err = rpc.Register(&m)
 	if err != nil {
 		log.Fatal(err)

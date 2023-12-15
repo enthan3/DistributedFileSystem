@@ -1,6 +1,9 @@
 package MasterDefinition
 
-import "DistributedFileSystem/Metadata"
+import (
+	"DistributedFileSystem/MasterNode/MaterLogService"
+	"DistributedFileSystem/Metadata"
+)
 
 type MasterServer struct {
 	CurrentRPCAddress       string
@@ -12,5 +15,6 @@ type MasterServer struct {
 	StoragePath             string
 	ReplicationFactor       int
 	LoadBalanceIndex        int
+	Logger                  *MaterLogService.Logger
 	IsBackup                bool
 }
