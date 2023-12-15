@@ -40,7 +40,7 @@ func StartLoadBalancerServer() {
 	go func() {
 		for {
 			err = LoadBalancerRPC.SendStatusRequestToMaster(l.LoadBalancerServer)
-			fmt.Println(l.LoadBalancerServer.MasterStatusMap["127.0.0.1:10010"].Stat.Load1)
+			fmt.Println(l.LoadBalancerServer.MasterStatusMap["192.168.8.15:10010"].Stat.Load1)
 			if err != nil {
 				log.Fatal(err)
 			}

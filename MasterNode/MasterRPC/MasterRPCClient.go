@@ -100,7 +100,7 @@ func SendFileMetadataToMasterBackup(FileMetadata *Metadata.FileMetaData, m *Mast
 		return
 	}
 	//TODO
-	err = client.Call("", FileMetadata, &reply)
+	err = client.Call("MasterRPCServer.ReceiveFileFromFrontendService", FileMetadata, &reply)
 	if err != nil {
 		return
 	}
@@ -114,7 +114,7 @@ func SendSearchToMasterBackup(FileUUID string, m *MasterDefinition.MasterServer)
 		return
 	}
 	//TODO
-	err = client.Call("", FileUUID, &reply)
+	err = client.Call("MasterRPCServer.ReceiveDeleteFromFrontendService", FileUUID, &reply)
 	if err != nil {
 		return
 	}
@@ -128,7 +128,7 @@ func SendDeleteToMasterBackup(FileMetadata *Metadata.FileMetaData, m *MasterDefi
 		return
 	}
 	//TODO
-	err = client.Call("", FileMetadata, &reply)
+	err = client.Call("MasterRPCServer.ReceiveSearchFromFrontendService", FileMetadata, &reply)
 	if err != nil {
 		return
 	}

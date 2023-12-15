@@ -47,6 +47,7 @@ func (m *MasterRPCServer) ReceiveFileFromFrontendService(FileArg *Transmission.F
 	if err != nil {
 		return err
 	}
+	SendFileMetadataToMasterBackup(&FileMetadata, m.MasterServer)
 	*reply = true
 	return nil
 }
@@ -61,13 +62,14 @@ func (m *MasterRPCServer) ReceiveDeleteFromFrontendService(FileName string, repl
 		*reply = "Delete send to Slave Master error"
 	}
 	FileUUID := m.MasterServer.FileMetadataName[FileName].FileID
-	delete(m.MasterServer.FileMetadataName, FileName)
-	delete(m.MasterServer.FileMetadataID, FileUUID)
+
 	err = m.MasterServer.Logger.Log(FileUUID, "Delete")
 	if err != nil {
 		return err
 	}
-
+	SendDeleteToMasterBackup(m.MasterServer.FileMetadataName[FileName], m.MasterServer)
+	delete(m.MasterServer.FileMetadataName, FileName)
+	delete(m.MasterServer.FileMetadataID, FileUUID)
 	*reply = "Success!"
 	return nil
 }
@@ -82,6 +84,7 @@ func (m *MasterRPCServer) ReceiveSearchFromFrontendService(Filename string, repl
 	if err != nil {
 		return err
 	}
+	SendSearchToMasterBackup(FileMetadata.FileID, m.MasterServer)
 	*reply = *FileMetadata
 	return nil
 }

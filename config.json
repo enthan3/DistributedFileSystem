@@ -1,19 +1,19 @@
 {
 
-  "LoadBalancerHTTPAddress": "127.0.0.1:9996",
-  "LoadBalancerRPCAddress": "127.0.0.1:9997",
+  "LoadBalancerHTTPAddress": "192.168.8.15:9996",
+  "LoadBalancerRPCAddress": "192.168.8.15:9997",
   "LoadBalancerHeartbeatDuration": 5,
-  "LoadBalancerMasterAddress": {"127.0.0.1:10010": "127.0.0.1:10011"},
+  "LoadBalancerMasterAddress": {"192.168.8.15:10010": "192.168.8.23:10011"},
 
 
-  "FrontendServiceHTTPAddress": "127.0.0.1:9998",
-  "FrontendServiceRPCAddress": "127.0.0.1:9999",
+  "FrontendServiceHTTPAddress": "192.168.8.15:9998",
+  "FrontendServiceRPCAddress": "192.168.8.15:9999",
   "FrontendServiceCacheSize": 2,
   "FrontendServiceStoragePath": "./FrontendServiceData/",
 
-  "MasterRPCAddress": "127.0.0.1:10010",
-  "MasterBackupRPCAddress": "127.0.0.1:10011",
-  "SlavesRPCAddress": ["127.0.0.1:10004"],
+  "MasterRPCAddress": "192.168.8.15:10010",
+  "MasterBackupRPCAddress": "192.168.8.23:10011",
+  "SlavesRPCAddress": ["192.168.8.15:10004"],
   "MasterLogPath" : "./MasterLog/",
   "MasterHeartbeatDuration": 5,
   "MasterChunkSize": 67108864,
@@ -24,6 +24,6 @@
   "MasterBackupLogPath": "./MasterBackupLog/",
   "MasterBackupHeartbeatDuration": 5,
 
-  "SlaveRPCAddress": "127.0.0.1:10004",
+  "SlaveRPCAddress": "192.168.8.15:10004",
   "SlaveStoragePath": "./SlaveData/"
 }
