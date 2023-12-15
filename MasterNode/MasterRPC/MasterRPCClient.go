@@ -83,7 +83,6 @@ func SendSyncLogToMaster(LatestID int64, m *MasterDefinition.MasterServer) error
 	if err != nil {
 		return err
 	}
-	//TODO
 	err = client.Call("MasterRPCServer.ReceiveSyncLogFromMasterBackup", LatestID, &reply)
 	if !reply {
 		return errors.New("Send sync log MasterBackup error")
@@ -91,14 +90,17 @@ func SendSyncLogToMaster(LatestID int64, m *MasterDefinition.MasterServer) error
 	return nil
 }
 
-func SendStatusRequestToMaster(m *MasterDefinition.MasterServer) error {
+func SendStatusRequestToMaster(m *MasterDefinition.MasterServer) (error, bool) {
 	var reply Transmission.MasterStatusArg
 	client, err := rpc.Dial("tcp", m.CurrentRPCAddress)
 	if err != nil {
-		return err
+		return nil, false
 	}
 	err = client.Call("MasterRPCServer.ReceiveStatusRequestFromLoadBalancer", &struct{}{}, &reply)
-	return nil
+	if !reply.HealthStatus {
+		return nil, false
+	}
+	return nil, true
 }
 
 //Master To MasterBackups Updates FileMetadata function

@@ -17,4 +17,5 @@ type MasterServer struct {
 	LoadBalanceIndex        int
 	Logger                  *MaterLogService.Logger
 	IsBackup                bool
+	LoadBalancerRPCAddress  string
 }

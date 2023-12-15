@@ -17,19 +17,20 @@ func StartMasterServer() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	Logger, err := MaterLogService.InitLogger(Config.LogPath + "MasterLog")
+	if err != nil {
+		log.Fatal(err)
+	}
+	m := MasterRPC.MasterRPCServer{MasterServer: &MasterDefinition.MasterServer{CurrentRPCAddress: Config.CurrentRPCAddress,
+		CurrentBackupRPCAddress: Config.MasterBackupRPCAddress, SlaveRPCAddress: Config.SlavesRPCAddress,
+		FileMetadataName: make(map[string]*Metadata.FileMetaData), FileMetadataID: make(map[string]*Metadata.FileMetaData),
+		ChunkSize: 67108864, StoragePath: Config.StoragePath, ReplicationFactor: 3, LoadBalanceIndex: 0, Logger: Logger,
+		IsBackup: Config.IsBackup, LoadBalancerRPCAddress: Config.LoadBalancerRPCAddress}}
+	err = rpc.Register(&m)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if !Config.IsBackup {
-		Logger, err := MaterLogService.InitLogger(Config.LogPath + "MasterLog")
-		if err != nil {
-			log.Fatal(err)
-		}
-		m := MasterRPC.MasterRPCServer{MasterServer: &MasterDefinition.MasterServer{CurrentRPCAddress: Config.CurrentRPCAddress,
-			CurrentBackupRPCAddress: Config.MasterBackupRPCAddress, SlaveRPCAddress: Config.SlavesRPCAddress,
-			FileMetadataName: make(map[string]*Metadata.FileMetaData), FileMetadataID: make(map[string]*Metadata.FileMetaData),
-			ChunkSize: 67108864, StoragePath: Config.StoragePath, ReplicationFactor: 3, LoadBalanceIndex: 0, Logger: Logger, IsBackup: false}}
-		err = rpc.Register(&m)
-		if err != nil {
-			log.Fatal(err)
-		}
 		L, err := net.Listen("tcp", m.MasterServer.CurrentRPCAddress)
 		if err != nil {
 			log.Fatal(err)
@@ -43,18 +44,6 @@ func StartMasterServer() {
 			go rpc.ServeConn(conn)
 		}
 	} else {
-		Logger, err := MaterLogService.InitLogger(Config.LogPath + "MasterLog")
-		if err != nil {
-			log.Fatal(err)
-		}
-		m := MasterRPC.MasterRPCServer{MasterServer: &MasterDefinition.MasterServer{CurrentRPCAddress: Config.CurrentRPCAddress,
-			CurrentBackupRPCAddress: Config.MasterBackupRPCAddress, SlaveRPCAddress: Config.SlavesRPCAddress,
-			FileMetadataName: make(map[string]*Metadata.FileMetaData), FileMetadataID: make(map[string]*Metadata.FileMetaData),
-			ChunkSize: 67108864, StoragePath: Config.StoragePath, ReplicationFactor: 3, LoadBalanceIndex: 0, Logger: Logger, IsBackup: true}}
-		err = rpc.Register(&m)
-		if err != nil {
-			log.Fatal(err)
-		}
 		L, err := net.Listen("tcp", m.MasterServer.CurrentBackupRPCAddress)
 		if err != nil {
 			log.Fatal(err)
@@ -63,15 +52,18 @@ func StartMasterServer() {
 		if err != nil {
 			return
 		}
-
 		go func() {
-			err := MasterRPC.SendStatusRequestToMaster(m.MasterServer)
-			if err != nil {
-				log.Fatal(err)
-			}
-			time.Sleep(time.Duration(Config.HeartbeatDuration) * time.Second)
-		}()
+			for {
+				err, Status := MasterRPC.SendStatusRequestToMaster(m.MasterServer)
+				if err != nil {
+					log.Fatal(err)
+				}
+				if !Status {
 
+				}
+				time.Sleep(time.Duration(Config.HeartbeatDuration) * time.Second)
+			}
+		}()
 		go func() {
 			for {
 				conn, err := L.Accept()
@@ -81,6 +73,6 @@ func StartMasterServer() {
 				go rpc.ServeConn(conn)
 			}
 		}()
-
 	}
+
 }

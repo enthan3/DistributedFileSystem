@@ -15,6 +15,7 @@ type MasterConfiguration struct {
 	StoragePath            string   `json:"MasterStoragePath"`
 	ReplicationFactor      int      `json:"MasterReplicationFactor"`
 	IsBackup               bool     `json:"MasterIsBackup"`
+	LoadBalancerRPCAddress string   `json:"LoadBalancerRPCAddress"`
 }
 
 func LoadMasterConfiguration(path string) (MasterConfiguration, error) {
