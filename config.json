@@ -9,21 +9,18 @@
   "FrontendServiceHTTPAddress": "192.168.8.15:9998",
   "FrontendServiceRPCAddress": "192.168.8.15:9999",
   "FrontendServiceCacheSize": 2,
-  "FrontendServiceStoragePath": "./FrontendServiceData/",
+  "FrontendServiceStoragePath": "./Data/FrontendServiceData/",
 
   "MasterRPCAddress": "192.168.8.15:10010",
   "MasterBackupRPCAddress": "192.168.8.23:10011",
   "SlavesRPCAddress": ["192.168.8.15:10004"],
-  "MasterLogPath" : "./MasterLog/",
-  "MasterHeartbeatDuration": 5,
+  "MasterLogPath" : "./Log/MasterLog/",
+  "MasterHeartbeatDuration": 2,
   "MasterChunkSize": 67108864,
-  "MasterStoragePath": "./MasterData/",
+  "MasterStoragePath": "./Data/MasterData/",
   "MasterReplicationFactor": 3,
   "MasterIsBackup": false,
 
-  "MasterBackupLogPath": "./MasterBackupLog/",
-  "MasterBackupHeartbeatDuration": 5,
-
   "SlaveRPCAddress": "192.168.8.15:10004",
-  "SlaveStoragePath": "./SlaveData/"
+  "SlaveStoragePath": "./Data/SlaveData/"
 }

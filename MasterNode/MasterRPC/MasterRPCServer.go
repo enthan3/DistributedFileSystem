@@ -144,7 +144,7 @@ func (m *MasterRPCServer) ReceiveDeleteFromMaster(FileMetadata *Metadata.FileMet
 	if !exist {
 		return errors.New("File does not exist in ID mapping")
 	}
-	err := m.MasterServer.Logger.Log(FileMetadata.FileID, "Search")
+	err := m.MasterServer.Logger.Log(FileMetadata.FileID, "Delete")
 	if err != nil {
 		return err
 	}

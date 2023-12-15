@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"net/rpc"
+	"time"
 )
 
 func StartMasterServer() {
@@ -58,13 +59,28 @@ func StartMasterServer() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		err = MasterRPC.SendSyncLogToMaster(Logger.LatestID, m.MasterServer)
+		if err != nil {
+			return
+		}
 
-		for {
-			conn, err := L.Accept()
+		go func() {
+			err := MasterRPC.SendStatusRequestToMaster(m.MasterServer)
 			if err != nil {
 				log.Fatal(err)
 			}
-			go rpc.ServeConn(conn)
-		}
+			time.Sleep(time.Duration(Config.HeartbeatDuration) * time.Second)
+		}()
+
+		go func() {
+			for {
+				conn, err := L.Accept()
+				if err != nil {
+					log.Fatal(err)
+				}
+				go rpc.ServeConn(conn)
+			}
+		}()
+
 	}
 }
