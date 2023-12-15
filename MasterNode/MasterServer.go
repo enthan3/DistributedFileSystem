@@ -9,7 +9,6 @@ import (
 	"log"
 	"net"
 	"net/rpc"
-	"time"
 )
 
 func StartMasterServer() {
@@ -30,12 +29,24 @@ func StartMasterServer() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if !Config.IsBackup {
-		L, err := net.Listen("tcp", m.MasterServer.CurrentRPCAddress)
-		if err != nil {
-			log.Fatal(err)
-		}
 
+	go func() {
+		var L net.Listener
+		if !m.MasterServer.IsBackup {
+			L, err = net.Listen("tcp", m.MasterServer.CurrentRPCAddress)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			L, err = net.Listen("tcp", m.MasterServer.CurrentBackupRPCAddress)
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = MasterRPC.SendSyncLogToMaster(m.MasterServer.Logger.LatestID, m.MasterServer)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 		for {
 			conn, err := L.Accept()
 			if err != nil {
@@ -43,36 +54,28 @@ func StartMasterServer() {
 			}
 			go rpc.ServeConn(conn)
 		}
-	} else {
-		L, err := net.Listen("tcp", m.MasterServer.CurrentBackupRPCAddress)
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = MasterRPC.SendSyncLogToMaster(Logger.LatestID, m.MasterServer)
-		if err != nil {
-			return
-		}
-		go func() {
-			for {
+
+	}()
+
+	go func() {
+		for {
+			if m.MasterServer.IsBackup {
 				err, Status := MasterRPC.SendStatusRequestToMaster(m.MasterServer)
 				if err != nil {
 					log.Fatal(err)
 				}
 				if !Status {
-
+					Temp := m.MasterServer.CurrentRPCAddress
+					m.MasterServer.CurrentRPCAddress = m.MasterServer.CurrentBackupRPCAddress
+					m.MasterServer.CurrentBackupRPCAddress = Temp
+					m.MasterServer.IsBackup = false
+					err = MasterRPC.SendPromotionRequestToLoadBalancer(m.MasterServer)
+					if err != nil {
+						log.Fatal(err)
+					}
 				}
-				time.Sleep(time.Duration(Config.HeartbeatDuration) * time.Second)
 			}
-		}()
-		go func() {
-			for {
-				conn, err := L.Accept()
-				if err != nil {
-					log.Fatal(err)
-				}
-				go rpc.ServeConn(conn)
-			}
-		}()
-	}
+		}
+	}()
 
 }

@@ -12,9 +12,9 @@ type LoadBalancerRPCServer struct {
 }
 
 // ReceivePromotionFromBackup Receive Promotion Request from Master Backup Server receiving
-func (l *LoadBalancerRPCServer) ReceivePromotionFromBackup(MasterBackupAddress *string, reply *bool) error {
+func (l *LoadBalancerRPCServer) ReceivePromotionFromBackup(MasterBackupAddress string, reply *bool) error {
 	for MasterAddress, MasterBackup := range l.LoadBalancerServer.MasterBackupsMap {
-		if MasterBackup == *MasterBackupAddress {
+		if MasterBackup == MasterBackupAddress {
 			delete(l.LoadBalancerServer.MasterBackupsMap, MasterAddress)
 			l.LoadBalancerServer.MasterBackupsMap[MasterBackup] = MasterAddress
 			delete(l.LoadBalancerServer.MasterStatusMap, MasterAddress)

@@ -103,8 +103,23 @@ func SendStatusRequestToMaster(m *MasterDefinition.MasterServer) (error, bool) {
 	return nil, true
 }
 
-//Master To MasterBackups Updates FileMetadata function
+func SendPromotionRequestToLoadBalancer(m *MasterDefinition.MasterServer) error {
+	var reply bool
+	client, err := rpc.Dial("tcp", m.LoadBalancerRPCAddress)
+	if err != nil {
+		return err
+	}
+	err = client.Call("LoadBalancerRPCServer.ReceivePromotionFromBackup", m.CurrentBackupRPCAddress, &reply)
+	if err != nil {
+		return err
+	}
+	if !reply {
+		return errors.New("Send promotino request to Master error")
+	}
+	return nil
+}
 
+// Master To MasterBackups Updates FileMetadata function
 func SendFileMetadataToMasterBackup(FileMetadata *Metadata.FileMetaData, m *MasterDefinition.MasterServer) {
 	var reply bool
 	client, err := rpc.Dial("tcp", m.CurrentBackupRPCAddress)
