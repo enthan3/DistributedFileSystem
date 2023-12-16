@@ -19,7 +19,7 @@
   "MasterChunkSize": 67108864,
   "MasterStoragePath": "./Data/MasterData/",
   "MasterReplicationFactor": 3,
-  "MasterIsBackup": false,
+  "MasterIsBackup": true,
 
   "SlaveRPCAddress": "192.168.8.15:10004",
   "SlaveStoragePath": "./Data/SlaveData/"

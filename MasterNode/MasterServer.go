@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"net/rpc"
+	"sync"
 )
 
 func StartMasterServer() {
@@ -29,8 +30,11 @@ func StartMasterServer() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var wg sync.WaitGroup
 
+	wg.Add(2)
 	go func() {
+		defer wg.Done()
 		var L net.Listener
 		if !m.MasterServer.IsBackup {
 			L, err = net.Listen("tcp", m.MasterServer.CurrentRPCAddress)
@@ -58,6 +62,7 @@ func StartMasterServer() {
 	}()
 
 	go func() {
+		defer wg.Done()
 		for {
 			if m.MasterServer.IsBackup {
 				err, Status := MasterRPC.SendStatusRequestToMaster(m.MasterServer)
@@ -77,5 +82,5 @@ func StartMasterServer() {
 			}
 		}
 	}()
-
+	wg.Wait()
 }
